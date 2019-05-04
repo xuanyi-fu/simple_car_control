@@ -14,9 +14,9 @@ public:
     path()= default;
     Eigen::Matrix<double, 3, 2> operator()(double t){
         Eigen::Matrix<double, 3, 2> dStates = Eigen::Matrix<double, 3, 2>::Zero();
-        auto Path    = mPath.lower_bound(t);
-        dStates.block(0,0,3,1) = Path->second.first(t).block(0,0,3,1);
-        dStates.block(0,1,3,1) = Path->second.second(t).block(0,0,3,1);
+        auto mPathIt    = mPath.lower_bound(t);
+        dStates.block(0,0,3,1) = mPathIt->second.first(t).block(0,0,3,1);
+        dStates.block(0,1,3,1) = mPathIt->second.second(t).block(0,0,3,1);
         return dStates;
     }
     template <typename T1, typename T2>
@@ -28,7 +28,32 @@ public:
         mPath[endTime].first  = xPath;
         mPath[endTime].second = yPath;
     }
+
+    void addPathFromParamMatrix(const std::vector<double>& endTimes, const Eigen::MatrixXd& XparamMat, const Eigen::MatrixXd& YparamMat ){
+
+        if(endTimes.size() != XparamMat.cols() || endTimes.size() != YparamMat.cols() || XparamMat.cols() != YparamMat.cols()){
+            ROS_ERROR_STREAM("in addPathFromParamMatrix, Wrong Matrix/Vector Sizes!");
+        }
+
+        auto matColIndex = 0;
+        auto matRowNum = XparamMat.rows();
+        for(auto endTime : endTimes){
+            Eigen::Matrix<double, 1, Eigen::Dynamic> XparamVec;
+            XparamVec.resize(1,matRowNum);
+            XparamVec.block(0,0,1,4) = XparamMat.block(0,matColIndex,matRowNum,1).transpose();
+
+
+            Eigen::Matrix<double, 1, Eigen::Dynamic> YparamVec;
+            YparamVec.resize(1,matRowNum);
+            YparamVec.block(0,0,1,4) = XparamMat.block(0,matColIndex,matRowNum,1).transpose();
+
+            addPath(endTime,XparamVec,YparamVec);
+
+            ++matColIndex;
+        }
+    }
 private:
     std::map<double, std::pair<BaseFunction, BaseFunction>> mPath;
 };
+
 #endif //CAR_CONTROL_PATH_H
