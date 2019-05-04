@@ -24,12 +24,12 @@ namespace util {
     template<int order>
     class polynomial {
     public:
-        explicit polynomial(const Eigen::Matrix<double, 1, order + 1> &coefficient)
-                : mCoefficient(Eigen::Matrix<double, 3, order + 1>::Zero())
-        {
+        polynomial() = default;
+        void set(const Eigen::Matrix<double, 1, order + 1> &coefficient){
+            mCoefficient = Eigen::Matrix<double, 3, order + 1>::Zero();
             mCoefficient.block(0,0,1,order + 1)     = coefficient.block(0,0,1,order + 1);
-            mCoefficient.block(1,0,1,order    )     = getDCoefficient<order>(coefficient).block(0,0,1,order);
-            mCoefficient.block(2,0,1,order - 1)     = getDCoefficient<order - 1>(getDCoefficient<order>(coefficient)).block(0,0,1,order - 1);
+            mCoefficient.block(1,1,1,order    )     = getDCoefficient<order>(coefficient).block(0,0,1,order);
+            mCoefficient.block(2,2,1,order - 1)     = getDCoefficient<order - 1>(getDCoefficient<order>(coefficient)).block(0,0,1,order - 1);
         }
 
         Eigen::Matrix<double, 3, 1> operator()(double t) {
