@@ -7,6 +7,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 namespace util {
+
     template<int order>
     Eigen::Matrix<double, 1, order> getDCoefficient(const Eigen::Matrix<double, 1, order + 1>& coeff){
 
@@ -46,8 +47,6 @@ namespace util {
     private:
         Eigen::Matrix<double, 3, order + 1> mCoefficient;
     };
-
-
 }
 
 #endif //CAR_CONTROL_POLYN_H

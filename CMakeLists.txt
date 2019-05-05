@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+MESSAGE(STATUS "")
+set(Matlab_ROOT_DIR /home/xuanyi/MATLAB)
 project(car_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-set(Matlab_FIND_DEBUG)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -15,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
         tf
 )
-set(Matlab_ROOT_DIR /home/xuanyi/MATLAB)
+
 find_package(Eigen3 REQUIRED)
 find_package(Sophus REQUIRED)
 find_package(Matlab REQUIRED COMPONENTS
@@ -206,5 +208,3 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-MESSAGE(STATUS "HAHAH! ${Matlab_LIBRARIES}")

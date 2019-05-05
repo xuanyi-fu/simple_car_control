@@ -57,8 +57,11 @@ public:
             ++matColIndex;
         }
     }
+
+    double getPathFinalEndTime(){
+        return (--(mPath.cend()))->first;
+    }
 private:
     std::map<double, std::pair<BaseFunction, BaseFunction>> mPath;
 };
-
 #endif //CAR_CONTROL_PATH_H
