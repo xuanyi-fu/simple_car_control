@@ -14,9 +14,14 @@ public:
     path()= default;
     Eigen::Matrix<double, 3, 2> operator()(double t){
         Eigen::Matrix<double, 3, 2> dStates = Eigen::Matrix<double, 3, 2>::Zero();
-        auto mPathIt    = mPath.lower_bound(t);
-        dStates.block(0,0,3,1) = mPathIt->second.first(t).block(0,0,3,1);
-        dStates.block(0,1,3,1) = mPathIt->second.second(t).block(0,0,3,1);
+        auto PathIt    = mPath.lower_bound(t);
+        if(PathIt != mPath.begin()){
+            auto LastPathIt = --PathIt;
+            PathIt++;
+            t = t - LastPathIt->first;
+        }
+        dStates.block(0,0,3,1) = PathIt->second.first(t).block(0,0,3,1);
+        dStates.block(0,1,3,1) = PathIt->second.second(t).block(0,0,3,1);
         return dStates;
     }
     template <typename T1, typename T2>
@@ -45,7 +50,7 @@ public:
 
             Eigen::Matrix<double, 1, Eigen::Dynamic> YparamVec;
             YparamVec.resize(1,matRowNum);
-            YparamVec.block(0,0,1,4) = XparamMat.block(0,matColIndex,matRowNum,1).transpose();
+            YparamVec.block(0,0,1,4) = YparamMat.block(0,matColIndex,matRowNum,1).transpose();
 
             addPath(endTime,XparamVec,YparamVec);
 

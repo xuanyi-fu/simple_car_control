@@ -85,6 +85,12 @@ int main(int argc, char** argv)
 
     auto multiPath = path<util::polynomial<3> >();
     multiPath.addPathFromParamMatrix(endTimes, Axs, Ays);
+    for(int i = 1; i < 20; i++){
+        std::cout<<"Time: "<<i<<std::endl;
+        std::cout<<multiPath(i)<<std::endl;
+        std::cout<<" "<<std::endl;
+    }
+
 
 //    auto multiPath = path<util::polynomial<3> >();
 //    Eigen::Matrix<double, 1, 4> A1 = Eigen::Vector4d(0.0100, -0.1500, 1.0000, 0).transpose();
