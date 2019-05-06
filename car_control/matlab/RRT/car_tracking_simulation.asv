@@ -1,0 +1,48 @@
+%car tracking simulation
+clear all;clc;
+addpath('MinkowskiSum');
+%initialize the simulation environment
+A = [-.5 -.5 .5 .5;.5 -.5 -.5 .5];% defines the robot
+q = [1 2 0];
+
+O1 = [0 0 5 5;5 3 3 5];O2=[5 5 10 10;8 7 7 8];O3=[8 7 8 9 10 9;8 7 6 6 7 8];
+Cobs = {O1,O2};
+Infla_obs_cell = MinkowskiSum(A, Cobs ,q);
+
+%set the initial position and goal position
+mapbox=[10,10];NumNodes=300;stepsize=1;
+qI.coord = [0;0]; qG.coord= [9.5;9.5];
+
+
+
+figure(1)
+axis([0 mapbox(1) 0 mapbox(2)])
+patch(O1(1,:),O1(2,:),'yellow');hold on
+patch(O1(1,:),O1(2,:),'yellow');hold on
+patch(O2(1,:),O2(2,:),'yellow');hold on
+% patch(O3(1,:),O3(2,:),'yellow');hold on
+plot(qI.coord(1),qI.coord(2),'*b');plot(qG.coord(1),qG.coord(2),'*r');
+
+%do the global planner
+[path ,V ,E ,bool] = build_RRT(qI, qG, NumNodes, stepsize,mapbox, Cobs)
+for i = 1:size(path,2)-1
+    x = [path(i).coord(1) path(i+1).coord(1)];
+    y = [path(i).coord(2) path(i+1).coord(2)];
+    plot(x,y,'-gs','LineWidth',2,...
+    'MarkerSize',7,...
+    'MarkerEdgeColor','b',...
+    'MarkerFaceColor',[0.5,0.5,0.5]);
+    hold on
+end
+waitforbuttonpress;
+
+%do the local planner
+num_iter = size(path,2);A_matrix ={};
+for iter = 1:num_iter-1
+    qI = path(iter);
+    qG = path(iter+1);
+    A = localplanner(qI.coord,qG.coord);
+    A_matrix{iter} ={A};
+end
+
+

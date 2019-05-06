@@ -1,0 +1,10 @@
+<launch>
+	<include file="$(find ackermann_vehicle_gazebo)/launch/ackermann_vehicle.launch"/>
+	<param name = "inputMatlabFile" type="str" value="$(find car_control)/matlab/inputParams.mat"/>
+	<param name = "inputXVariableName" type="str" value="Axs"/>
+	<param name = "inputYVariableName" type="str" value="Ays"/>
+	<param name = "outputMatlabFile" type="str" value="$(find car_control)/matlab/outputStates.mat"/>
+	<param name = "outputVariableName" type="str" value="States"/>
+
+	<node name="car_control_node" pkg="car_control" type="car_control_node" />
+</launch>
